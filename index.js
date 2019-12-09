@@ -29,19 +29,37 @@ class Airplane {
 
 /*
   TASK 1
-    - Write a Person class whose constructor initializes `name` and `age` from arguments.
-    - All instances of Person should also initialize with an empty `stomach` array.
-    - Give instances of Person the ability to `.eat("someFood")`:
-        + When eating an edible, it should be pushed into the `stomach`.
-        + The `eat` method should have no effect if there are 10 items in the `stomach`.
-    - Give instances of Person the ability to `.poop()`:
-        + When an instance poops, its `stomach` should empty.
-    - Give instances of Person a method `.toString()`:
-        + It should return a string with `name` and `age`. Example: "Mary, 50"
+    * -  Write a Person class whose constructor initializes `name` and `age` from arguments.
+    * - All instances of Person should also initialize with an empty `stomach` array.
+    * - Give instances of Person the ability to `.eat("someFood")`:
+        * + When eating an edible, it should be pushed into the `stomach`.
+        *+ The `eat` method should have no effect if there are 10 items in the `stomach`.
+    * - Give instances of Person the ability to `.poop()`:
+        * + When an instance poops, its `stomach` should empty.
+    * - Give instances of Person a method `.toString()`:
+        * + It should return a string with `name` and `age`. Example: "Mary, 50"
 */
 
 class Person {
+  constructor(name, age) {
+    this.name = name;
+    this.age = age;
+    this.stomach = [];
+  }
 
+  eat(food) {
+    if (this.stomach.length < 10) {
+      this.stomach.push(food);
+    }
+  }
+
+  poop() {
+    this.stomach.length = 0;
+  }
+
+  toString() {
+    return `${this.name}, ${this.age}`;
+  }
 }
 
 /*
@@ -59,6 +77,35 @@ class Person {
 */
 
 class Car {
+  constructor(model, milesPerGallon) {
+    this.model = model;
+    this.milesPerGallon = milesPerGallon;
+    this.tank = 0; // initialize at 0
+    this.odometer = 0; // initialize at 0
+
+  }
+
+  fill(gallons) { // adds gallons to tank
+    this.tank += gallons;
+  }
+
+  drive(distance) {
+    const availableMiles = this.tank * this.milesPerGallon;
+
+    if (availableMiles < distance) {
+      this.tank = 0;
+      this.odometer += availableMiles;
+      return `I ran out of fuel at ${this.odometer} miles!`
+    }
+    
+    // cause tank to go down taking mpg into account
+    const gallons = distance / this.milesPerGallon;
+    this.tank -= gallons;
+    
+    // cause odometer to go up
+    this.odometer += distance;
+    
+  }
 
 }
 
@@ -75,7 +122,15 @@ class Car {
         + {name} and {location} of course come from the instance's own properties.
 */
 class Lambdasian {
+  constructor({name, age, location}) {
+    this.name = name;
+    this.age = age;
+    this.location = location;
+  }
 
+  speak() {
+    return `Hello my name is ${this.name}, I am from ${this.location}`
+  }
 }
 
 /*
@@ -92,8 +147,21 @@ class Lambdasian {
         + `demo` receives a `subject` string as an argument and returns the phrase 'Today we are learning about {subject}' where subject is the param passed in.
         + `grade` receives a `student` object and a `subject` string as arguments and returns '{student.name} receives a perfect score on {subject}'
 */
-class Instructor {
+class Instructor extends Lambdasian {
+  constructor({specialty, favLanguage, catchPhrase, ...lamdasianProps}) {
+    super(lamdasianProps);
+    this.specialty = specialty;
+    this.favLanguage = favLanguage;
+    this.catchPhrase = catchPhrase;
+  }
 
+  demo(subject) {
+    return `Today we are learning about ${subject}`;
+  }
+
+  grade(student, subject) {
+    return `${student.name} receives a perfect score on ${subject}`
+  }
 }
 
 /*
@@ -111,8 +179,27 @@ class Instructor {
         + `PRAssignment` a method that receives a subject as an argument and returns `student.name has submitted a PR for {subject}`
         + `sprintChallenge` similar to PRAssignment but returns `student.name has begun sprint challenge on {subject}`
 */
-class Student {
+class Student extends Lambdasian {
+  constructor({previousBackground, className, favSubjects = [], ...lambdasianProps}) {
+    super(lambdasianProps);
+    this.previousBackground = previousBackground;
+    this.className = className;
+    this.favSubjects = favSubjects
+  }
 
+  listSubjects() {
+    let sentence = 'Loving '
+    const subjectFragment = this.favSubjects.join(', ');
+    return sentence.concat(subjectFragment);
+  }
+
+  PRAssignment(subject) {
+    return `${this.name} has submitted a PR for ${subject}`
+  }
+
+  sprintChallenge(subject) {
+    return `${this.name} has begun sprint challenge on ${subject}`
+  }
 }
 
 /*
@@ -128,8 +215,20 @@ class Student {
         + `standUp` a method that takes in a slack channel and returns `{name} announces to {channel}, @channel standy times!`
         + `debugsCode` a method that takes in a student object and a subject and returns `{name} debugs {student.name}'s code on {subject}`
 */
-class ProjectManager {
+class ProjectManager extends Instructor{
+  constructor({gradClassName, favInstructor, ...instructorProps}) {
+    super(instructorProps);
+    this.gradClassName = gradClassName;
+    this.favInstructor = favInstructor;
+  }
 
+  standUp(channel) {
+    return `${this.name} announces to ${channel}, @channel standy times!`;
+  }
+
+  debugsCode(student, subject) {
+    return `${this.name} debugs ${student.name}'s code on ${subject}`
+  }
 }
 
 /*
@@ -144,13 +243,27 @@ class ProjectManager {
 ///////// END OF CHALLENGE /////////
 ///////// END OF CHALLENGE /////////
 ///////// END OF CHALLENGE /////////
-if (typeof exports !== 'undefined') {
-  module.exports = module.exports || {}
-  if (Airplane) { module.exports.Airplane = Airplane }
-  if (Person) { module.exports.Person = Person }
-  if (Car) { module.exports.Car = Car }
-  if (Lambdasian) { module.exports.Lambdasian = Lambdasian }
-  if (Instructor) { module.exports.Instructor = Instructor }
-  if (Student) { module.exports.Student = Student }
-  if (ProjectManager) { module.exports.ProjectManager = ProjectManager }
+if (typeof exports !== "undefined") {
+  module.exports = module.exports || {};
+  if (Airplane) {
+    module.exports.Airplane = Airplane;
+  }
+  if (Person) {
+    module.exports.Person = Person;
+  }
+  if (Car) {
+    module.exports.Car = Car;
+  }
+  if (Lambdasian) {
+    module.exports.Lambdasian = Lambdasian;
+  }
+  if (Instructor) {
+    module.exports.Instructor = Instructor;
+  }
+  if (Student) {
+    module.exports.Student = Student;
+  }
+  if (ProjectManager) {
+    module.exports.ProjectManager = ProjectManager;
+  }
 }
